@@ -1,0 +1,69 @@
+# version: '3.8'
+services:
+  postgresdb:
+    image: postgres
+    container_name: ${DB_SERVER_HOST}
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRESDB_USER
+      - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRESDB_DATABASE
+    ports:
+      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/postgres
+      - ./task-server/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  server:
+    image: tm-server:1.0.0
+    container_name: ${SERVER_HOST}
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    build:
+      context: ./task-server
+      dockerfile: ./Dockerfile
+      network: host
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      - server-node-modules:/server/node_modules  
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=postgresdb
+      - DB_USER=$POSTGRESDB_USER
+      - DB_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - DB_NAME=$POSTGRESDB_DATABASE
+      - DB_PORT=$POSTGRESDB_DOCKER_PORT
+    stdin_open: true
+    tty: true
+  frontend:
+    image: tm-frontend:1.0.0
+    container_name: tm-frontend
+    build:
+      context: ./taskmanagement
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    env_file: ./.env
+    command: sh -c "npm start"
+    working_dir: /home/node/app
+    volumes:
+      - frontend-app:/home/node/app
+      - frontend-node-modules:/home/node/app/node_modules
+    ports:
+      - 4200:4200
+
+volumes: 
+  server-node-modules:
+    name: "server-node-modules"
+  frontend-app:
+    name: "frontend-app"
+  frontend-node-modules:
+    name: "frontend-node-modules"
+  db:

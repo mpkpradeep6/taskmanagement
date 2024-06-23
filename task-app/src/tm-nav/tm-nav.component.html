@@ -1,0 +1,32 @@
+<mat-toolbar color="primary">
+    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+    <h1 class="example-app-name">Task Management</h1>
+</mat-toolbar>
+
+<mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+        fixedTopGap="56">
+        <mat-nav-list>
+            @for (nav of fillerNav; track nav) {
+            <a mat-list-item (click)="onSelect(nav)">{{nav.label}}</a>
+            }
+        </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <div style="width: 80vb; height: 80vh;">
+            <p>Hello World</p>
+            <!-- <router-outlet></router-outlet> -->
+            <!-- @for (content of fillerContent; track content) {
+                <p>{{content}}</p>
+                } -->
+            <p>{{selectedMenu}}</p>
+            @if (selectedMenu === 'read'){
+            <tm-home></tm-home>
+            }
+            @else if(selectedMenu === 'create'){
+            <tm-create></tm-create>
+            }
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
