@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'taskmanagement' title`, () => {
+  it(`should have the 'Task Management' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('taskmanagement');
+    expect(app.title).toEqual('Task Management');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, taskmanagement');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Task Management');
   });
 });

@@ -47,7 +47,7 @@ services:
     image: tm-frontend:1.0.0
     container_name: tm-frontend
     build:
-      context: ./taskmanagement
+      context: ./task-app
       dockerfile: ./Dockerfile
     restart: unless-stopped
     env_file: ./.env

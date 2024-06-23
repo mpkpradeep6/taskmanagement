@@ -12,5 +12,5 @@ import { TmNavComponent } from '../tm-nav/tm-nav.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'taskmanagement';
+  title = 'Task Management';
 }

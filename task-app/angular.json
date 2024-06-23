@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "taskmanagement": {
+    "task-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/taskmanagement",
+            "outputPath": "dist/task-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "taskmanagement:build:production"
+              "buildTarget": "task-app:build:production"
             },
             "development": {
-              "buildTarget": "taskmanagement:build:development"
+              "buildTarget": "task-app:build:development"
             }
           },
           "defaultConfiguration": "development"
