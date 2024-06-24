@@ -12,7 +12,7 @@ services:
     ports:
       - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
     volumes:
-      - db:/var/lib/postgres
+      - postgres-db:/var/lib/postgres
       - ./task-server/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -66,4 +66,5 @@ volumes:
     name: "frontend-app"
   frontend-node-modules:
     name: "frontend-node-modules"
-  db:
+  postgres-db:
+    name: "postgres-db"

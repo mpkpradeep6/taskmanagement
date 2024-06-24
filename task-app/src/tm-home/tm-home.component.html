@@ -1,6 +1,10 @@
+<div class="example-button-container">
+    <button mat-fab extended (click)="openDialog()">Add Task</button>
+</div>
 <ag-grid-angular 
     class="ag-theme-quartz" 
     style="height: 60vh; width: 60vw;" 
+    [gridOptions]="gridOptions"
     [rowData]="rowData" 
     [columnDefs]="colDefs">
 </ag-grid-angular>

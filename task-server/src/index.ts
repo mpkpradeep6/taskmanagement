@@ -76,6 +76,24 @@ app.post('/tasks/add', async (req: Request, res: Response) => {
     }
 });
 
+app.delete('/tasks/remove', async (req: Request, res: Response) => {
+    try {
+        const result = await Tasks.destroy({
+            // fields: ['title', 'description', 'status']
+            where: {
+                taskId: req.body.taskId
+            }
+        });
+        if (result === 1) {
+            res.send({ removed: 'SUCCESS' }).status(200);
+        } else {
+            res.send({ removed: 'ROW NOT FOUND' }).status(200);
+        }
+    } catch (exception) {
+        res.send({ exception }).status(500);
+    }
+});
+
 app.get('/tasks', async (req: Request, res: Response) => {
     try {
         const result = await Tasks.findAll({

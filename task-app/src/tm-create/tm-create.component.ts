@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TaskService } from '../services/task.service';
+import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'tm-create',
@@ -12,6 +14,8 @@ import { TaskService } from '../services/task.service';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatButtonModule,
+    MatDialogModule,
     FormsModule,
     ReactiveFormsModule
   ],
@@ -27,7 +31,9 @@ export class TmCreateComponent implements OnInit {
   ];
 
   taskForm: FormGroup;
-
+  componentTitle = 'Add Task';
+  actionLabel = 'Add';
+  private readonly data = inject<any>(MAT_DIALOG_DATA);
   constructor(private readonly formBuilder: FormBuilder,
     private readonly taskService: TaskService
   ) {
@@ -39,7 +45,15 @@ export class TmCreateComponent implements OnInit {
     this.taskForm.get('status')?.setValue('open');
   }
   ngOnInit(): void {
-    
+    if (this.data?.action === 'update') {
+      this.componentTitle = 'Update Task';
+      this.actionLabel = 'Update';
+      this.taskForm.patchValue({
+        title: this.data.title,
+        description: this.data.description,
+        status: this.data.status
+      });
+    }
   }
 
   onSubmit() {

@@ -3,3 +3,4 @@
 **/.angular
 **/.vscode
 **/.editorconfig
+**/node_modules

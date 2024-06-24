@@ -16,3 +16,12 @@ Content-Type: application/json
     "description": "This is test3",
     "status": "open"
 }
+
+###
+
+DELETE http://localhost:6868/tasks/remove
+Content-Type: application/json
+
+ {
+    "taskId": 1
+}

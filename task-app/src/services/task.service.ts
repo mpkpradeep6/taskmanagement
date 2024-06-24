@@ -10,9 +10,13 @@ export class TaskService {
 
   private sTasks: BehaviorSubject<Task[]> = new BehaviorSubject([] as Task[]);
   public tasks: Observable<Task[]>;
+  private sloginStatus: BehaviorSubject<any> = new BehaviorSubject(null);
+  public loginStatus: Observable<any>;
   private baseUrl = 'http://localhost:6868';
   constructor(private readonly httpClient: HttpClient) {
     this.tasks = this.sTasks.asObservable();
+    this.loginStatus = this.sloginStatus.asObservable();
+
   }
 
   public getTasks(): void {
@@ -28,4 +32,16 @@ export class TaskService {
     headers.append('Content-Type', 'application/json');
     return this.httpClient.post(`${this.baseUrl}/tasks/add`, task, { headers });
   }
+
+  public deleteTask(taskId: number): Observable<any> {
+
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.httpClient.delete(`${this.baseUrl}/tasks/remove`, { headers, body: { taskId } });
+  }
+
+  public login(): void {
+    this.sloginStatus.next({ login: true });
+  }
+
 }

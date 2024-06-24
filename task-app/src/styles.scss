@@ -4,6 +4,7 @@
 @use 'ag-grid-community/styles/ag-grid.css';
 /* Quartz Theme Specific CSS */
 @use 'ag-grid-community/styles/ag-theme-quartz.css';
+@use "@angular/material/prebuilt-themes/indigo-pink.css";
 
 $theme: mat.define-theme((
   color: (
