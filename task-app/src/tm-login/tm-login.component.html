@@ -5,20 +5,22 @@
     <section>
         <mat-form-field>
             <mat-label>User Name</mat-label>
-            <input matInput formControlName="username">
+            <input matInput formControlName="username" (input)="passwordAllowedChars($event)" (keypress)="usernameAllowedChars($event)" (paste)="onPaste($event)" maxlength="16">
+            <mat-error *ngIf="loginForm.get('username')?.hasError('minlength')">Please enter min of 8 char and max 16</mat-error>
         </mat-form-field>
     </section>
     <section>
         <mat-form-field>
             <mat-label>Password</mat-label>
-            <input matInput formControlName="password">
+            <input matInput type="password" formControlName="password" (input)="passwordAllowedChars($event)" (keypress)="passwordAllowedChars($event)" (paste)="onPaste($event)" maxlength="16">
+            <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">Please enter min of 8 char and max 16</mat-error>
         </mat-form-field>
     </section>
     @if(isNewUser.checked === true){
     <section>
         <mat-form-field>
             <mat-label>Confirm Password</mat-label>
-            <input matInput formControlName="confirmPassword">
+            <input matInput type="password" formControlName="confirmPassword" (input)="passwordAllowedChars($event)" (keypress)="passwordAllowedChars($event)" (paste)="onPaste($event)" maxlength="16" minlength="8">
             <mat-error *ngIf="loginForm.get('confirmPassword')?.hasError('required')">Please Enter Confirm Password.</mat-error>
             <mat-error *ngIf="loginForm.get('confirmPassword')?.hasError('passwordMismatch')">Confirm Password does not match with
                 Password.</mat-error>

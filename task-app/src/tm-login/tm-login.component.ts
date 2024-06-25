@@ -36,8 +36,8 @@ export class TmLoginComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required],
+      username: ['', [Validators.required, Validators.maxLength(16), Validators.minLength(8)]],
+      password: ['', [Validators.required, Validators.maxLength(16), Validators.minLength(8)]],
       confirmPassword: [''],
       newUser: ['']
     }, { validator: this.checkPassword('password', 'confirmPassword') });
@@ -91,5 +91,27 @@ export class TmLoginComponent implements OnInit, OnDestroy {
   onSubmit() {
     const user = { user: this.loginForm.value.username, password: this.loginForm.value.password };
     this.taskService.login(user, this.isRegister);
+  }
+
+  passwordAllowedChars(event: any) {
+    const str = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (/^[a-zA-Z0-9\_\#\@\$\%\&\*-]+$/i.test(str)) {
+      return true;
+    }
+    event.preventDefault();
+    return false;
+  }
+  usernameAllowedChars(event: any) {
+    const str = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (/^[a-zA-Z0-9\_]+$/i.test(str)) {
+      return true;
+    }
+    event.preventDefault();
+    return false;
+  }
+
+  onPaste(event: any) {
+    event.preventDefault();
+    return false;
   }
 }
