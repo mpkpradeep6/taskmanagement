@@ -1,11 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TaskService } from '../services/task.service';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { Task } from '../model/task';
 
 @Component({
   selector: 'tm-create',
@@ -27,7 +28,7 @@ export class TmCreateComponent implements OnInit {
     { value: 'Open', key: 'open' },
     { value: 'To Do', key: 'todo' },
     { value: 'In Progress', key: 'inprogress' },
-    { value: 'Open', key: 'done' }
+    { value: 'Done', key: 'done' }
   ];
 
   taskForm: FormGroup;
@@ -57,14 +58,12 @@ export class TmCreateComponent implements OnInit {
   }
 
   onSubmit() {
-    this.taskService.addTask(this.taskForm.value).subscribe({
-      next: nextValue => {
-        console.log(nextValue);
-      },
-      error: errorValue => {
-        console.log(errorValue);
-      }
-    });
+    const isUpdate = this.data?.action === 'update';
+    const data = this.taskForm.value as Task;
+    if (isUpdate) {
+      data.taskId = this.data.taskId;
+    }
+    this.taskService.addTask(data, isUpdate);
     console.log(this.taskForm.value);
   }
 }

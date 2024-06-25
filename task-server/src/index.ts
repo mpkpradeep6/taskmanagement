@@ -65,14 +65,32 @@ app.get('/', (req: Request, res: Response) => {
 
 app.post('/tasks/add', async (req: Request, res: Response) => {
     try {
-
-        const result = await Tasks.create(req.body, {
+        const task = { ...req.body };
+        const result = await Tasks.create(task, {
             fields: ['title', 'description', 'status']
         });
-        
-        res.send({ added: 'SUCCESS' }).status(200);
+        res.send({ response: { add: 'SUCCESS' }, errorCode: 0, errorMessage: 'Successfully added' }).status(200);
     } catch (exception) {
-        res.send({ exception }).status(500);
+        res.send({ response: { exception }, errorCode: 9, errorMessage: 'Error Occurred' }).status(500);
+    }
+});
+
+app.put('/tasks/update', async (req: Request, res: Response) => {
+    try {
+        const task = { ...req.body };
+        const result = await Tasks.update(task, {
+            fields: ['title', 'description', 'status'],
+            where: {
+                taskId: task.taskId
+            }
+        });
+        if (result.length > 0 && result[0] > 0) {
+            res.send({ response: { update: 'SUCCESS' }, errorCode: 0, errorMessage: 'Successfully updated' }).status(200);
+        } else {
+            res.send({ response: { update: 'ROWS NOT FOUND' }, errorCode: 1, errorMessage: 'Failed to update' }).status(200);
+        }
+    } catch (exception) {
+        res.send({ response: { exception }, errorCode: 9, errorMessage: 'Error Occurred' }).status(500);
     }
 });
 
@@ -85,9 +103,9 @@ app.delete('/tasks/remove', async (req: Request, res: Response) => {
             }
         });
         if (result === 1) {
-            res.send({ removed: 'SUCCESS' }).status(200);
+            res.send({ response: { remove: 'SUCCESS' }, errorCode: 0, errorMessage: 'Successfully removed' }).status(200);
         } else {
-            res.send({ removed: 'ROW NOT FOUND' }).status(200);
+            res.send({ response: { remove: 'ROWS NOT FOUND' }, errorCode: 1, errorMessage: 'Failed to remove' }).status(200);
         }
     } catch (exception) {
         res.send({ exception }).status(500);
@@ -99,10 +117,10 @@ app.get('/tasks', async (req: Request, res: Response) => {
         const result = await Tasks.findAll({
             attributes: ['title', 'description', 'status', 'taskId']
         });
-        
-        res.send({ tasks: result }).status(200);
+
+        res.send({ response: { tasks: result }, errorCode: 0, errorMessage: 'Successfully fetched' }).status(200);
     } catch (exception) {
-        res.send({ exception }).status(500);
+        res.send({ response: { exception }, errorCode: 9, errorMessage: 'Error Occurred' }).status(200);
     }
 });
 

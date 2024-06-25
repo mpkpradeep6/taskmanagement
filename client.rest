@@ -22,6 +22,18 @@ Content-Type: application/json
 DELETE http://localhost:6868/tasks/remove
 Content-Type: application/json
 
- {
+{
+    "taskId": 1
+}
+
+###
+
+PUT http://localhost:6868/tasks/update
+Content-Type: application/json
+
+{
+    "title": "Test 3",
+    "description": "This is test3",
+    "status": "open",
     "taskId": 1
 }

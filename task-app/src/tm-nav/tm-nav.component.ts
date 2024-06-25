@@ -61,7 +61,7 @@ export class TmNavComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // TODO: Call login in login component
     // this.taskService.login();
-    this.subscriptions.push(this.taskService.loginStatus.subscribe(val => {
+    this.subscriptions.push(this.taskService.loginStatus$.subscribe(val => {
       this.isLoginSuccess = !!val?.login;
     }));
   }

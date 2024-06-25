@@ -1,10 +1,10 @@
 @if(action === 'delete') {
-<button mat-mini-fab aria-label="Delete Task" (click)="btnClickedHandler($event)">
+<button mat-mini-fab aria-label="Delete Task" class="tm-cell-renderer" (click)="btnClickedHandler($event)">
     <mat-icon>delete</mat-icon>
 </button>
 }
 @else if(action === 'update') {
-<button mat-mini-fab aria-label="Update Task" (click)="btnClickedHandler($event)">
+<button mat-mini-fab aria-label="Update Task" class="tm-cell-renderer" (click)="btnClickedHandler($event)">
     <mat-icon>edit</mat-icon>
 </button>
 }

@@ -8,6 +8,7 @@ import { TaskActionCellRendererComponent } from '../task-action-cell-renderer/ta
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TmCreateComponent } from '../tm-create/tm-create.component';
+import { TaskUtils } from '../utils/task.utils';
 
 @Component({
   selector: 'tm-home',
@@ -25,24 +26,21 @@ export class TmHomeComponent implements OnInit, OnDestroy {
 
   // Column Definitions: Defines the columns to be displayed.
   colDefs: ColDef[] = [
-    { field: 'title' },
-    { field: 'description' },
-    { field: 'status' },
     {
-      field: 'delete', cellRenderer: TaskActionCellRendererComponent, minWidth: 80, width: 80, cellRendererParams: {
-        action: 'delete',
-        clicked: function (field: any) {
-          alert(`${field} was deleted`);
-        }
-      }
+      field: 'delete', cellRenderer: TaskActionCellRendererComponent, headerName: '',
+      resizable: false, sortable: false, filter: false, width: 65,
+      cellRendererParams: { action: 'delete' }
     },
     {
-      field: 'update', cellRenderer: TaskActionCellRendererComponent, minWidth: 80, width: 80, cellRendererParams: {
-        action: 'update',
-        clicked: function (field: any) {
-          alert(`${field} was updated`);
-        }
-      }
+      field: 'update', cellRenderer: TaskActionCellRendererComponent, headerName: '',
+      resizable: false, sortable: false, filter: false, width: 65,
+      cellRendererParams: { action: 'update' }
+    },
+    { field: 'title', tooltipField: 'title', filter: true },
+    { field: 'description', tooltipField: 'description', filter: true },
+    {
+      field: 'status', resizable: false, filter: true,
+      valueFormatter: params => TaskUtils.statusList.find(k => k.key === params.value)?.value || ''
     }
   ];
 
@@ -59,23 +57,8 @@ export class TmHomeComponent implements OnInit, OnDestroy {
 
   deleteRow(row: any) {
     const rowNode = this.gridApi.getRowNode(row);
-    this.taskService.deleteTask(row).subscribe({
-      next: val => {
-        if (val.removed === 'SUCCESS') {
-          this.gridApi.applyTransaction({ remove: [rowNode?.data] });
-        }
-      },
-      error: val => {
-
-      }
-    });
-  }
-
-  updateRow(row: any) {
-    const rowNode = this.gridApi.getRowNode(row);
-    const data = rowNode?.data;
-    this.openCreateDialog({ action: 'update', ...data });
-    // this.taskService.deleteTask(row).subscribe({
+    this.taskService.deleteTask(row);
+    // .subscribe({
     //   next: val => {
     //     if (val.removed === 'SUCCESS') {
     //       this.gridApi.applyTransaction({ remove: [rowNode?.data] });
@@ -87,18 +70,34 @@ export class TmHomeComponent implements OnInit, OnDestroy {
     // });
   }
 
+  updateRow(row: any) {
+    const rowNode = this.gridApi.getRowNode(row);
+    const data = rowNode?.data;
+    this.openCreateDialog({ action: 'update', ...data });
+  }
+
   ngOnInit(): void {
     this.gridOptions = {
       context: {
         instance: this
       },
+      defaultColDef: {
+        suppressMovable: true,
+      },
       onGridReady: ready => {
         this.gridApi = ready.api;
+        this.gridApi.sizeColumnsToFit();
       },
       getRowId: row => row.data.taskId
     } as GridOptions;
     this.taskService.getTasks();
-    this.subscriptions.push(this.taskService.tasks.subscribe(val => this.rowData = val));
+    this.subscriptions.push(this.taskService.tasks$.subscribe((val: any) => this.rowData = val));
+    this.subscriptions.push(
+      this.taskService.taskAction$.subscribe(val => {
+        if (val?.action !== 'read') {
+          this.taskService.getTasks();
+        }
+      }));
   }
 
   openDialog() {
