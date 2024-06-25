@@ -1,6 +1,8 @@
 This Project is about Task Management
+
 Prerequisties:
-1. Docker (Preferrable)
+1. Docker (Preferrably Docker for Desktop)
+
 Steps to Bring Up the applications given below
 1. Go to the root directory
 2. Run the command 'docker compose up'
