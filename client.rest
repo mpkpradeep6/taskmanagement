@@ -5,6 +5,7 @@ Content-Type: application/json
 
 GET http://localhost:6868/tasks
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoicHJhZGVlcCIsImlhdCI6MTcxOTMzNjA2NSwiZXhwIjoxNzE5MzM2NjY1fQ.LyIvsykee267X28mmGko3k_kHKHyeMIM_9L61rJeK6M
 
 ###
 
@@ -36,4 +37,43 @@ Content-Type: application/json
     "description": "This is test3",
     "status": "open",
     "taskId": 1
+}
+
+###
+
+GET http://localhost:6868/users
+Content-Type: application/json
+
+###
+POST http://localhost:6868/users/create
+Content-Type: application/json
+
+ {
+    "user": "pradeep",
+    "password": "sample"
+}
+
+###
+POST http://localhost:6868/users/login
+Content-Type: application/json
+
+ {
+    "user": "pradeep",
+    "password": "sample"
+}
+
+###
+POST http://localhost:6868/token
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoicHJhZGVlcCIsImlhdCI6MTcxOTMzNTM2Mn0.TZt-LqRCrjjQ6nNvXGQIJb8tCMKciTgiMW1RXdRX9nE"
+}
+
+###
+DELETE http://localhost:6868/logout
+Content-Type: application/json
+
+{
+    "user": "pradeep"
 }

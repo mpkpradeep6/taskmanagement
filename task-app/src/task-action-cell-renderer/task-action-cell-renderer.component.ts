@@ -24,16 +24,12 @@ export class TaskActionCellRendererComponent implements ICellRendererAngularComp
   }
 
   btnClickedHandler(event: any) {
-    let selectedData = this.params.api.getSelectedRows();
-    console.log(selectedData);
     if (this.action === 'delete') {
       this.params.context.instance.deleteRow(this.params.data.taskId);
     }
     else if (this.action === 'update') {
       this.params.context.instance.updateRow(this.params.data.taskId);
     }
-    // this.params.clicked(this.params.data.taskId);
-    // this.params.api.updateRowData({ remove: selectedData });
   }
 
   ngOnDestroy() {

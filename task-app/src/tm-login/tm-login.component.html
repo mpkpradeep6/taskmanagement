@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Login</h2>
+<h3 *ngIf="loginStatusMessage.length > 0">{{loginStatusMessage}}</h3>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- <mat-dialog-content class="mat-typography"> -->
+    <section>
+        <mat-form-field>
+            <mat-label>User Name</mat-label>
+            <input matInput formControlName="username">
+        </mat-form-field>
+    </section>
+    <section>
+        <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password">
+        </mat-form-field>
+    </section>
+    @if(isNewUser.checked === true){
+    <section>
+        <mat-form-field>
+            <mat-label>Confirm Password</mat-label>
+            <input matInput formControlName="confirmPassword">
+            <mat-error *ngIf="loginForm.get('confirmPassword')?.hasError('required')">Please Enter Confirm Password.</mat-error>
+            <mat-error *ngIf="loginForm.get('confirmPassword')?.hasError('passwordMismatch')">Confirm Password does not match with
+                Password.</mat-error>
+        </mat-form-field>
+    </section>
+    }
+    <section>
+        <mat-checkbox #isNewUser formControlName="newUser">New User</mat-checkbox>
+    </section>
+    <!-- </mat-dialog-content> -->
+    <!-- <mat-dialog-actions align="end"> -->
+    <section>
+        <!-- <button mat-button>Cancel</button> -->
+        <button mat-button cdkFocusInitial type="submit" [disabled]="!loginForm.valid">{{loginAction}}</button>
+    </section>
+    <!-- </mat-dialog-actions> -->
+</form>

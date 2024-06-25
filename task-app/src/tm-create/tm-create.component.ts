@@ -64,6 +64,5 @@ export class TmCreateComponent implements OnInit {
       data.taskId = this.data.taskId;
     }
     this.taskService.addTask(data, isUpdate);
-    console.log(this.taskForm.value);
   }
 }

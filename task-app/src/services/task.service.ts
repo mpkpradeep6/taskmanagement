@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Task } from '../model/task';
 import { TaskAction } from '../model/task-action';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,8 @@ export class TaskService {
   public taskAction$: Observable<TaskAction>;
   public error$: Observable<any>;
   private baseUrl = 'http://localhost:6868';
+  private refreshToken = '';
+  private accessToken = '';
   constructor(private readonly httpClient: HttpClient) {
     this.tasks$ = this.sTasks.asObservable();
     this.loginStatus$ = this.sloginStatus.asObservable();
@@ -27,7 +30,8 @@ export class TaskService {
   }
 
   public getTasks(): void {
-    this.httpClient.get(`${this.baseUrl}/tasks`)
+    const headers = this.getHeaders();
+    this.httpClient.get(`${this.baseUrl}/tasks`, { headers })
     .subscribe(
       (val: any) => {
         if (val.errorCode === 0) {
@@ -41,8 +45,7 @@ export class TaskService {
 
   public addTask(task: Task, update = false) {
     this.resetError();
-    const headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
+    const headers = this.getHeaders();
     if (update) {
       this.httpClient.put(`${this.baseUrl}/tasks/update`, task, { headers }).subscribe(
         (val: any) => {
@@ -68,8 +71,7 @@ export class TaskService {
 
   public deleteTask(taskId: number) {
 
-    const headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
+    const headers = this.getHeaders();
     this.httpClient.delete(`${this.baseUrl}/tasks/remove`, { headers, body: { taskId } }).subscribe(
       (val: any) => {
         if (val.errorCode === 0) {
@@ -81,12 +83,48 @@ export class TaskService {
     );
   }
 
-  public login(): void {
-    this.sloginStatus.next({ login: true });
+  public login(user: User, isRegister = false): void {
+    const headers = new HttpHeaders();
+    const action = isRegister ? 'create' : 'login';
+    headers.append('Content-Type', 'application/json');
+    this.httpClient.post(`${this.baseUrl}/users/${action}`, user, { headers }).subscribe({
+      next: (val: any) => {
+        if (val.errorCode === 0) {
+          if (!isRegister) {
+            this.accessToken = val.response.accessToken;
+            this.refreshToken = val.response.refreshToken;
+          }
+          this.sloginStatus.next({ action, status: 'success', errorMessage: val.errorMessage });
+        } else {
+          this.sloginStatus.next({ action, status: 'failure', errorMessage: val.errorMessage });
+        }
+      },
+      error: (val: any) => {
+        this.sloginStatus.next({ action, status: 'failure', errorMessage: val.error?.errorMessage });
+      }
+    });
+  }
+
+  public logout(user: User): void {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    this.httpClient.delete(`${this.baseUrl}/logout`, { headers, body: { user: user.user } }).subscribe(val => {
+      console.log('Logout');
+    });
   }
 
   public resetError() {
     this.sError.next(null);
+  }
+
+  private getHeaders() {
+    const headers = new HttpHeaders(
+      {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.accessToken}`
+      }
+    );
+    return headers;
   }
 
 }

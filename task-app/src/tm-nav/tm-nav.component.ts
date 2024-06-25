@@ -9,8 +9,9 @@ import { Router } from '@angular/router';
 import { TmHomeComponent } from '../tm-home/tm-home.component';
 import { TmCreateComponent } from '../tm-create/tm-create.component';
 import { TaskService } from '../services/task.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { TmLoginComponent } from '../tm-login/tm-login.component';
 
 const components = [
   CommonModule,
@@ -20,7 +21,8 @@ const components = [
   MatSidenavModule,
   MatListModule,
   TmHomeComponent,
-  TmCreateComponent
+  TmCreateComponent,
+  TmLoginComponent
 ];
 @Component({
   selector: 'tm-nav',
@@ -33,7 +35,7 @@ export class TmNavComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
 
   // fillerNav = Array.from({length: 5}, (_, i) => `Nav Item ${i + 1}`);
-  selectedMenu = 'home';
+  selectedMenu = 'login';
   isLoginSuccess = false;
   fillerNav = [
     { label: 'Home', key: 'home', visible: () => this.isLoginSuccess },
@@ -52,7 +54,8 @@ export class TmNavComponent implements OnInit, OnDestroy {
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher,
     private router: Router,
-    private readonly taskService: TaskService
+    private readonly taskService: TaskService,
+    // private readonly dialog: MatDialog
   ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -61,8 +64,12 @@ export class TmNavComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // TODO: Call login in login component
     // this.taskService.login();
-    this.subscriptions.push(this.taskService.loginStatus$.subscribe(val => {
-      this.isLoginSuccess = !!val?.login;
+    this.subscriptions.push(this.taskService.loginStatus$.pipe(filter(f => !!f)).subscribe(val => {
+      // this.isLoginSuccess = !!val?.login;
+      this.isLoginSuccess = val.action === 'login' && val.status === 'success';
+      if (this.isLoginSuccess) {
+        this.selectedMenu = 'home';
+      }
     }));
   }
 
@@ -74,14 +81,10 @@ export class TmNavComponent implements OnInit, OnDestroy {
   }
 
   onSelect($event: any) {
-    console.log($event);
-    // this.router.navigate([$event.key]);
     this.selectedMenu = $event.key;
     if (this.selectedMenu === 'logout') {
       this.isLoginSuccess = false;
-    } else if (this.selectedMenu === 'login') {
-    // TODO: Call login in login component
-      this.taskService.login();
+      this.selectedMenu = 'login';
     }
   }
 }
