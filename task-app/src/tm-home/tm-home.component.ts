@@ -55,19 +55,8 @@ export class TmHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteRow(row: any) {
-    const rowNode = this.gridApi.getRowNode(row);
+  deleteRow(row: number) {
     this.taskService.deleteTask(row);
-    // .subscribe({
-    //   next: val => {
-    //     if (val.removed === 'SUCCESS') {
-    //       this.gridApi.applyTransaction({ remove: [rowNode?.data] });
-    //     }
-    //   },
-    //   error: val => {
-
-    //   }
-    // });
   }
 
   updateRow(row: any) {
