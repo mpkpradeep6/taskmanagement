@@ -96,4 +96,70 @@ describe('TaskService', () => {
       service.error$.subscribe(value => expect(value).toBeTruthy());
     });
   });
+
+  describe('Delete Tasks', () => {
+    it('should delete tasks', () => {
+      service.deleteTask(1);
+      const testRequest = httpMock.expectOne(req => /tasks\/remove/i.test(req.url) && /delete/i.test(req.method));
+      testRequest.flush({ errorCode: 0, response: { status: 'SUCCESS' }});
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('delete');
+      httpMock.verify();
+      service.taskAction$.subscribe(value => expect(value.action).toEqual('remove'));
+      service.error$.subscribe(value => expect(value).toBeFalsy());
+    });
+
+    it('should notify error', () => {
+      service.deleteTask(2);
+      const testRequest = httpMock.expectOne(req => /tasks\/remove/i.test(req.url) && /delete/i.test(req.method));
+      testRequest.flush({ errorCode: 1, response: { status: 'FAILURE' }});
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('delete');
+      httpMock.verify();
+      service.taskAction$.subscribe(value => expect(value).toBeFalsy());
+      service.error$.subscribe(value => expect(value).toBeTruthy());
+    });
+  });
+
+  describe('Login', () => {
+    it('should create', () => {
+      service.login({user: 'testuser123', password: 'Abc123*'}, true);
+      const testRequest = httpMock.expectOne(req => /users\/create/i.test(req.url) && /post/i.test(req.method));
+      testRequest.flush({ errorCode: 0, response: { status: 'SUCCESS' }});
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('post');
+      httpMock.verify();
+      service.loginStatus$.subscribe(value => expect(value.action).toEqual('create'));
+    });
+
+    it('should login', () => {
+      service.login({user: 'testuser123', password: 'Abc123*'}, false);
+      let testRequest = httpMock.expectOne(req => /users\/login/i.test(req.url) && /post/i.test(req.method));
+      testRequest.flush({ errorCode: 0, response: { status: 'SUCCESS' }});
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('post');
+      httpMock.verify();
+      service.loginStatus$.subscribe(value => expect(value.action).toEqual('login'));
+
+      service.logout({ user: 'testuser123', password: '' });
+      testRequest = httpMock.expectOne(req => /logout/i.test(req.url) && /delete/i.test(req.method));
+      testRequest.flush({ errorCode: 0, response: { status: 'SUCCESS' }});
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('delete');
+      httpMock.verify();
+    });
+
+    it('should handle error thrown', () => {
+      service.login({user: 'testuser123', password: 'Abc123*'}, true);
+      const testRequest = httpMock.expectOne(req => /users\/create/i.test(req.url) && /post/i.test(req.method));
+      testRequest.error({ error: { errorMessage: 'Error Occurred' } }  as any as ProgressEvent);
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('post');
+      httpMock.verify();
+      service.loginStatus$.subscribe(value => expect(value.action).toEqual('create'));
+    });
+
+    it('should handle error code', () => {
+      service.login({user: 'testuser123', password: 'Abc123*'});
+      const testRequest = httpMock.expectOne(req => /users\/login/i.test(req.url) && /post/i.test(req.method));
+      testRequest.flush({ errorCode: 1, response: { status: 'FAILURE' }});
+      expect(testRequest.request.method.toLocaleLowerCase()).toEqual('post');
+      httpMock.verify();
+      service.loginStatus$.subscribe(value => expect(value.action).toEqual('login'));
+    });
+  });
 });
