@@ -22,3 +22,12 @@ Future Plans:
 2. Auto refresh
 3. Task due dates & reminders
 
+Unit Test cases for Angular project:
+TOTAL: 36 SUCCESS
+
+=============================== Coverage summary ===============================
+Statements   : 98.95% ( 189/191 )
+Branches     : 98.07% ( 51/52 )
+Functions    : 98.38% ( 61/62 )
+Lines        : 99.45% ( 183/184 )
+================================================================================
