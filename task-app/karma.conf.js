@@ -31,6 +31,9 @@ module.exports = function(config) {
 
     // list of files / patterns to exclude
     exclude: [
+      '**/fixtures/**/*.ts',
+      '**/model/**/*.ts',
+      '**/fixtures/*.ts'
     ],
 
 
